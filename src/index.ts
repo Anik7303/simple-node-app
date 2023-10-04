@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { getIPAddress } from "./lib/utils";
 import { catchAllErrors, notFound } from "./middlewares/error";
+import postsRouter from "./routes/posts";
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config({ path: path.resolve(".env") });
@@ -15,6 +16,8 @@ const PORT: string = process.env.PORT || "8000";
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+app.use(postsRouter);
 
 app.use(notFound);
 app.use(catchAllErrors);

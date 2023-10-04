@@ -1,0 +1,33 @@
+@host = {{$dotenv HOST}}
+@port = {{$dotenv PORT}}
+@baseurl = http://{{host}}:{{port}}
+
+### home route
+GET {{baseurl}}
+
+### fetch all posts
+GET {{baseurl}}/posts
+
+### fetch post with id 1
+GET {{baseurl}}/posts/1
+
+### create a new post
+# @name newPost
+POST {{baseurl}}/posts
+Content-Type: application/json
+
+{
+  "title":"new post",
+  "content":"new post content"
+}
+
+### update a post
+PATCH {{baseurl}}/posts/{{newPost.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "title": "updated title"
+}
+
+### delete a post
+DELETE {{baseurl}}/posts/{{newPost.response.body.$.id}}

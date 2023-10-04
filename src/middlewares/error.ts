@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ErrorWithStatus } from "../types";
+
 export function notFound(
   req: Request,
   res: Response,
@@ -11,7 +13,7 @@ export function notFound(
 }
 
 export function catchAllErrors(
-  error: Error & { statusCode: number },
+  error: ErrorWithStatus,
   req: Request,
   res: Response,
   _next: NextFunction
