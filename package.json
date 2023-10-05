@@ -12,7 +12,7 @@
   "keywords": [
     "Nodejs",
     "TypeScript",
-    "Docker"
+    "Prisma"
   ],
   "dependencies": {
     "@prisma/client": "^5.4.1",
