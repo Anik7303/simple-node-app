@@ -17,6 +17,8 @@ model User {
   username String  @unique
   password String
   posts    Post[]
+
+  @@map("users")
 }
 
 model Post {
@@ -28,4 +30,6 @@ model Post {
   updatedAt DateTime @updatedAt
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  String?  @db.ObjectId
+
+  @@map("posts")
 }

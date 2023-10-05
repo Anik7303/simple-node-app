@@ -1,0 +1,52 @@
+@host = {{$dotenv HOST}}
+@port = {{$dotenv PORT}}
+@baseurl = http://{{host}}:{{port}}/posts
+@json = application/json
+@postId = 651e9e0655e3458554488232
+
+### fetch all posts
+GET {{baseurl}}
+
+### create new post
+# @name post
+POST {{baseurl}}
+Content-Type: {{json}}
+
+{
+  "title": "new post",
+  "content": "new post content"
+}
+
+### fetch previously created post
+GET {{baseurl}}/{{post.response.body.$.id}}
+
+### fetch post with an id
+# @name post
+GET {{baseurl}}/{{postId}}
+
+### update post content
+PATCH {{baseurl}}/{{post.response.body.$.id}}
+Content-Type: {{json}}
+
+{
+  "content": "updated post content"
+}
+
+### update post title
+PATCH {{baseurl}}/{{post.response.body.$.id}}
+Content-Type: {{json}}
+
+{
+  "title": "updated title"
+}
+
+### update title of post with id
+PATCH {{baseurl}}/{{postId}}
+Content-Type: {{json}}
+
+{
+  "title": "updated title"
+}
+
+### delete post
+DELETE {{baseurl}}/{{post.response.body.$.id}}

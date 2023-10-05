@@ -1,75 +1,28 @@
-import Post from "../entities/post";
+import { Prisma } from "@prisma/client";
+
+import getInstance from "../database";
+import { generateSlugFromTitle } from "../lib/utils";
 import { ErrorWithStatus } from "../types";
 
-let posts: Post[] = [
-  {
-    id: 1,
-    title: "post 1",
-    content: "post content 1",
-    userId: 1,
-  },
-  {
-    id: 2,
-    title: "post 2",
-    content: "post content 2",
-    userId: 1,
-  },
-  {
-    id: 3,
-    title: "post 3",
-    content: "post content 3",
-    userId: 1,
-  },
-  {
-    id: 4,
-    title: "post 4",
-    content: "post content 4",
-    userId: 1,
-  },
-  {
-    id: 5,
-    title: "post 5",
-    content: "post content 5",
-    userId: 2,
-  },
-  {
-    id: 6,
-    title: "post 6",
-    content: "post content 6",
-    userId: 2,
-  },
-  {
-    id: 7,
-    title: "post 7",
-    content: "post content 7",
-    userId: 2,
-  },
-  {
-    id: 8,
-    title: "post 8",
-    content: "post content 8",
-    userId: 3,
-  },
-  {
-    id: 9,
-    title: "post 9",
-    content: "post content 9",
-    userId: 3,
-  },
-  {
-    id: 10,
-    title: "post 10",
-    content: "post content 10",
-    userId: 4,
-  },
-];
-
-export function findAll(): Post[] {
-  return posts satisfies Post[];
+export async function findAll(
+  cursor: Prisma.PostWhereUniqueInput | undefined = undefined,
+  limit: number = 10
+) {
+  return getInstance().post.findMany({
+    orderBy: { createdAt: "desc" },
+    cursor,
+    take: limit,
+  });
 }
 
-export function findOne(id: number): Post | undefined {
-  return posts.find((post) => post.id === id);
+export async function findOne(id: string) {
+  const post = await getInstance().post.findFirst({ where: { id } });
+  if (!post) {
+    const error: ErrorWithStatus = new Error(`Post #${id} not found.`);
+    error.statusCode = 404;
+    throw error;
+  }
+  return post;
 }
 
 interface CreatePost {
@@ -77,50 +30,38 @@ interface CreatePost {
   content: string;
 }
 
-export function create(info: CreatePost): Post {
+export async function create(info: CreatePost) {
   const { title, content } = info;
-  const post = {
-    id: posts.length + 1,
+  const slug = generateSlugFromTitle(title);
+  const post: Prisma.PostCreateInput = {
     title,
     content,
-    userId: 5,
+    slug,
   };
-  posts.push(post);
-  return post;
+  return getInstance().post.create({ data: post });
 }
 
 interface UpdatePost {
-  id: number;
+  id: string;
   title?: string;
   content?: string;
 }
 
-export function update(info: UpdatePost): Post {
+export async function update(info: UpdatePost) {
   const { id, title, content } = info;
-  const post = posts.find((p) => p.id === id);
-  if (!post) {
-    const error: ErrorWithStatus = new Error(`Post #${id} not found.`);
-    error.statusCode = 404;
-    throw error;
-  }
 
-  const updatedPost = {
-    ...post,
-    title: title || post.title,
-    content: content || post.content,
-  };
-  posts = posts.map((post) => (post.id === id ? updatedPost : post));
-  return updatedPost;
+  await findOne(id);
+
+  const data: Prisma.PostUpdateInput = {};
+  if (title) {
+    data.title = title;
+    data.slug = generateSlugFromTitle(title);
+  }
+  if (content) data.content = content;
+  return getInstance().post.update({ where: { id }, data });
 }
 
-export function remove(id: number): Post {
-  const post = posts.find((p) => p.id === id);
-  if (!post) {
-    const error: ErrorWithStatus = new Error(`Post #${id} not found.`);
-    error.statusCode = 404;
-    throw error;
-  }
-
-  posts = posts.filter((p) => p.id !== id);
-  return post;
+export async function remove(id: string) {
+  await findOne(id);
+  return getInstance().post.delete({ where: { id } });
 }

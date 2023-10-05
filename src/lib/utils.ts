@@ -14,3 +14,9 @@ export function getIPAddress(): string {
 
   return address;
 }
+
+export function generateSlugFromTitle(title: string): string {
+  const normalizedTitle = title.toLowerCase().replace(" ", "_");
+  const currentTime = Date.now();
+  return `${currentTime}_${normalizedTitle}`;
+}
