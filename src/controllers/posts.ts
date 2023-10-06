@@ -1,7 +1,7 @@
-import { Post } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 
-import * as services from "../services/posts";
+import Post from "../entities/post";
+import * as service from "../services/posts";
 
 export async function findAll(
   _req: Request,
@@ -9,7 +9,7 @@ export async function findAll(
   next: NextFunction
 ): Promise<void> {
   try {
-    const posts = await services.findAll();
+    const posts = await service.findAll();
     res.json(posts);
   } catch (error) {
     next(error);
@@ -22,7 +22,7 @@ export async function findOne(
   next: NextFunction
 ): Promise<void> {
   try {
-    const post = await services.findOne(req.params.id);
+    const post = await service.findOne(req.params.id);
     res.json(post);
   } catch (error) {
     next(error);
@@ -40,7 +40,7 @@ export async function create(
   next: NextFunction
 ): Promise<void> {
   try {
-    const post = await services.create(req.body);
+    const post = await service.create(req.body);
     res.status(201).json(post);
   } catch (error) {
     next(error);
@@ -59,7 +59,7 @@ export async function update(
 ): Promise<void> {
   try {
     const { id } = req.params;
-    const post = await services.update({ ...req.body, id });
+    const post = await service.update({ ...req.body, id });
     res.status(200).json(post);
   } catch (error) {
     next(error);
@@ -72,7 +72,7 @@ export async function remove(
   next: NextFunction
 ): Promise<void> {
   try {
-    const post = await services.remove(req.params.id);
+    const post = await service.remove(req.params.id);
     res.status(200).json(post);
   } catch (error) {
     next(error);

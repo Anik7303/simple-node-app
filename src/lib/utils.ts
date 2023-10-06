@@ -1,6 +1,6 @@
 import { networkInterfaces } from "node:os";
 
-export function getIPAddress(): string {
+export function getIPAddress(): string | null {
   let address = "";
   const interfaces = networkInterfaces();
 
@@ -12,7 +12,7 @@ export function getIPAddress(): string {
     }
   }
 
-  return address;
+  return null;
 }
 
 export function generateSlugFromTitle(title: string): string {

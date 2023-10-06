@@ -1,6 +1,9 @@
 export default interface Post {
-  id: number;
+  id: string;
+  slug: string;
   title: string;
-  content: string;
-  userId: number;
+  content: string | null;
+  authorId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }

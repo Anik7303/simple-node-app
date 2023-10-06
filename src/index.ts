@@ -27,7 +27,9 @@ async function main() {
     await app.listen(parseInt(PORT));
     console.log(`Local Address:\t\thttp://localhost:${PORT}`);
     const ipAddress = getIPAddress();
-    console.log(`Network Address:\thttp://${ipAddress}:${PORT}`);
+    if (ipAddress) {
+      console.log(`Network Address:\thttp://${ipAddress}:${PORT}`);
+    }
   } catch (error: unknown) {
     console.error(error);
   }

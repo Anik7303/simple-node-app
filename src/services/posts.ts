@@ -1,17 +1,13 @@
-import { Prisma } from "@prisma/client";
-
 import getInstance from "../database";
+import Post from "../entities/post";
 import { generateSlugFromTitle } from "../lib/utils";
 import { ErrorWithStatus } from "../types";
 
-export async function findAll(
-  cursor: Prisma.PostWhereUniqueInput | undefined = undefined,
-  limit: number = 10
-) {
+export async function findAll(limit: number = 10, offset: number = 0) {
   return getInstance().post.findMany({
     orderBy: { createdAt: "desc" },
-    cursor,
     take: limit,
+    skip: offset,
   });
 }
 
@@ -33,12 +29,12 @@ interface CreatePost {
 export async function create(info: CreatePost) {
   const { title, content } = info;
   const slug = generateSlugFromTitle(title);
-  const post: Prisma.PostCreateInput = {
+  const data = {
     title,
     content,
     slug,
   };
-  return getInstance().post.create({ data: post });
+  return getInstance().post.create({ data });
 }
 
 interface UpdatePost {
@@ -52,7 +48,7 @@ export async function update(info: UpdatePost) {
 
   await findOne(id);
 
-  const data: Prisma.PostUpdateInput = {};
+  const data: Partial<Post> = {};
   if (title) {
     data.title = title;
     data.slug = generateSlugFromTitle(title);
